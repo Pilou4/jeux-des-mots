@@ -30,35 +30,6 @@ function prepareBoard()
     );
 }
 
-function placeTile(e, ui) 
-{ 
-    $(ui.helper).addClass('waitingLetter'); 
-    const cellX = parseInt($(ui.helper).offset().left / (board.tileSize + board.offset)); 
-    const cellY = parseInt($(ui.helper).offset().top / (board.tileSize + board.offset)) - 1; 
-    const letter = $(ui.helper).find('.tileLetter').text(); 
-    gameBoard[cellY][cellX] = letter; 
-    $(ui.helper)
-    .attr('data-coords', cellY + '-' + cellX) 
-    .appendTo('.gameArea') 
-    .css(
-        {
-            position: 'absolute', 
-            left: ((cellX * (board.tileSize + board.offset)) + board.xOffset) + 'px', 
-            top: ((cellY * (board.tileSize + board.offset)) +  board.yOffset) + 'px',  
-        }
-    ); 
-    $('#WCCancel').removeClass('disabled');
-    playedWords = checkPositioning(); 
-    if (playedWords.status) 
-    { 
-        $('#WCValidate').removeClass('disabled'); 
-    } 
-    else 
-    { 
-        $('#WCValidate').addClass('disabled'); 
-    } 
-}
-
 // vérifie la rectitude du placement des différentes tuiles placées sur le plateau de jeu.
 function checkPositioning () 
 { 
@@ -70,6 +41,20 @@ function checkPositioning ()
     if (!verticalWord && !horizontalWord) 
     { 
            return {status: false, reason: 'Les lettres jouées ne sont pas toutes alignées horizontalement ou verticalement.'}; 
-    } 
+    }
+    let word =letters.map (e => $(e).find('label:first').text()).join(''); 
+    if ($('.playedTileItem').length == 0) 
+    { 
+        if (word.length < 2) 
+        { 
+            return {status: false, reason: "Le mot proposé est trop court."}; 
+        } 
+    }
+    if (!letters.some(e => parseInt($(e).offset().left / (board.tileSize + 
+        board.offset)) == 7 && parseInt($(e).offset().top / (board.tileSize +  
+        board.offset)) - 1 == 7)) 
+        { 
+            return {status: false, reason: 'Une des lettres du premier mot joué doit être posée sur la case centrale du plateau.'}; 
+        } 
     return {status: true}; 
 } 

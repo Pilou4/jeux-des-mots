@@ -259,4 +259,16 @@ body
 .gameArea .waitingLetter 
 { 
     background: yellow; 
+}
+.playedTileItem 
+{ 
+    width: 42px; 
+    height: 42px; 
+    background: white; 
+    border: solid 1px black; 
+    border-radius: 6px; 
+    float: left; 
+    margin-right: 2px; 
+    pointer-events: none; 
+    cursor: default; 
 } 
