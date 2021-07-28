@@ -47,6 +47,29 @@ function placeTile(e, ui)
             top: ((cellY * (board.tileSize + board.offset)) +  board.yOffset) + 'px',  
         }
     ); 
-    $('#WCCancel').removeClass('disabled'); 
+    $('#WCCancel').removeClass('disabled');
+    playedWords = checkPositioning(); 
+    if (playedWords.status) 
+    { 
+        $('#WCValidate').removeClass('disabled'); 
+    } 
+    else 
+    { 
+        $('#WCValidate').addClass('disabled'); 
+    } 
 }
 
+// vérifie la rectitude du placement des différentes tuiles placées sur le plateau de jeu.
+function checkPositioning () 
+{ 
+    let letters = $('.gameArea .tileItem').get(); 
+    let line = $(letters[0]).offset().top; 
+    let column = $(letters[0]).offset().left; 
+    const horizontalWord = letters.every(e => $(e).offset().top === line); 
+    const verticalWord = letters.every(e => $(e).offset().left === column); 
+    if (!verticalWord && !horizontalWord) 
+    { 
+           return {status: false, reason: 'Les lettres jouées ne sont pas toutes alignées horizontalement ou verticalement.'}; 
+    } 
+    return {status: true}; 
+} 
