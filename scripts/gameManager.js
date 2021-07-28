@@ -15,4 +15,8 @@ function takeLettersFromBag(number)
         letterBag = letters.join(''); 
     } 
     return result; 
+}
+function prepareTiles() 
+{ 
+    $('.tileItem').draggable(); 
 } 

@@ -15,9 +15,11 @@ function init()
         } 
         return a; 
     }; 
+     
     fillLetterBag();
-    getPlayerLetters(8);
     drawBoard(); 
+    getPlayerLetters(8);
+    prepareTiles();
 }
 
 function getPlayerLetters(number) 
