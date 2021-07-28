@@ -19,6 +19,7 @@ function init()
     fillLetterBag();
     drawBoard(); 
     getPlayerLetters(8);
+    prepareBoard();
     prepareTiles();
 }
 

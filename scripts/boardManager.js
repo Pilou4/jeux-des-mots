@@ -15,4 +15,38 @@ function drawBoard()
         } 
     } 
     $('.gameArea').empty().append(cells); 
-} 
+}
+
+function prepareBoard() 
+{ 
+    $('.gameArea').droppable(
+        {
+            accept: function (ui) 
+            {
+                return ui.hasClass('tileItem');
+            },
+            drop: placeTile 
+        },
+    );
+}
+
+function placeTile(e, ui) 
+{ 
+    $(ui.helper).addClass('waitingLetter'); 
+    const cellX = parseInt($(ui.helper).offset().left / (board.tileSize + board.offset)); 
+    const cellY = parseInt($(ui.helper).offset().top / (board.tileSize + board.offset)) - 1; 
+    const letter = $(ui.helper).find('.tileLetter').text(); 
+    gameBoard[cellY][cellX] = letter; 
+    $(ui.helper)
+    .attr('data-coords', cellY + '-' + cellX) 
+    .appendTo('.gameArea') 
+    .css(
+        {
+            position: 'absolute', 
+            left: ((cellX * (board.tileSize + board.offset)) + board.xOffset) + 'px', 
+            top: ((cellY * (board.tileSize + board.offset)) +  board.yOffset) + 'px',  
+        }
+    ); 
+    $('#WCCancel').removeClass('disabled'); 
+}
+

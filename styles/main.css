@@ -247,4 +247,16 @@ body
     font-weight: bold; 
     pointer-events: none; 
     font-size: 80%; 
+}
+.legalDropZone 
+{ 
+    background: palegreen !important; 
+}
+.forbiddenDropZone 
+{ 
+    background: red !important; 
+} 
+.gameArea .waitingLetter 
+{ 
+    background: yellow; 
 } 
