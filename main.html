@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./styles/normalize.css">
+        <link rel="stylesheet" href="./styles/main.css"> 
+        <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="scripts/gameParameters.js"></script> 
+        <script src="scripts/boardManager.js"></script> 
+        <script src="scripts/main.js"></script> 
+        <title>Jeux des mots</title>
+    </head>
+    <body>
+        <div class="mainContainer"> 
+            <div class="headerZone"> 
+                <img class="gameLogo" src="images/logoMots.png"> 
+                <label class="gameTitle">L&nbsp;E&nbsp;&nbsp;M&nbsp;A&nbsp;I&nbsp;T&nbsp;R&nbsp;E&nbsp;&nbsp;D&nbsp;E&nbsp;S&nbsp;&nbsp;M&nbsp;O&nbsp;T&nbsp;S</label> 
+                <img class="gameLogo" src="images/logoMots.png">  
+            </div> 
+            <div class="gameZone"> 
+                <div class="mainBoard"><div class="gameArea"></div></div> 
+                <div class="historyZone"></div> 
+            </div> 
+            <div class="playerZone"> 
+                <div class="tileZone"> 
+                    <div class="playerRack"></div> 
+                </div> 
+                <div class="toolZone"> 
+                    <div class="infoZone"></div> 
+                    <div class="toolbox"> 
+                        <img id="WCValidate" class="disabled" src="images/validate.png"> 
+                        <img id="WCCancel" class="disabled" src="images/cancel.png"> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+        
+    </body>
+</html>
