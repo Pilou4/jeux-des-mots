@@ -99,4 +99,37 @@ function placeTile(e, ui)
             $('#WCValidate').addClass('disabled'); 
         } 
     } 
-} 
+}
+
+function toolClick(e) 
+{ 
+    const cmd = $(e.currentTarget).attr('id'); 
+    switch (cmd) 
+    { 
+       case 'WCValidate': 
+           validate(); 
+           break; 
+       case 'WCCancel': 
+           cancel(); 
+           break;
+        case 'WCShuffle': 
+           shuffle(); 
+           break;
+        case 'WCChange': 
+           changeTiles(); 
+           break;
+        case 'startNewGame': 
+            createGame(); 
+            break;  
+       default:
+           if (cmd && typeof(window[cmd]) == "function") 
+           { 
+                  window[cmd](e); 
+           } 
+           else 
+           { 
+                  console.log('Commande', cmd, 'non reconnue'); 
+           } 
+           break; 
+    } 
+}

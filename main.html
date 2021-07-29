@@ -10,11 +10,78 @@
 		<script src="scripts/jquery.ui.min.js"></script>
         <script src="scripts/gameParameters.js"></script> 
         <script src="scripts/boardManager.js"></script>
+        <script src="scripts/manyWords_FR.js"></script>
+        <script src="scripts/wordManager.js"></script>  
+        <script src="scripts/toolManager.js"></script> 
         <script src="scripts/gameManager.js"></script>  
         <script src="scripts/main.js"></script> 
         <title>Jeux des mots</title>
     </head>
     <body>
+        <div class="mainMenu"> 
+            <img class="gameLogo" src="images/logoMots.png"> 
+            <label class="gameTitle">L&nbsp;E&nbsp;&nbsp;M&nbsp;A&nbsp;I&nbsp;T&nbsp;R&nbsp; E&nbsp;&nbsp;D&nbsp;E&nbsp;S&nbsp;&nbsp;M&nbsp;O&nbsp;T&nbsp;S</label> 
+            <img class="gameLogo" src="images/logoMots.png"> 
+            <div class="helpContainer"> 
+                   <p>Bienvenue dans notre jeu de lettres où vous devez former des mots sur un plateau à la mode des mots croisés.</p> 
+                   <p>Cliquez et glissez les tuiles disposées sur votre chevalet sur le meilleur emplacement possible afin de récolter le maximum de points.</p> 
+                   <p>Avec les boutons de la boite à outils :</p> 
+                   <ul> 
+                          <li>Utilisez le bouton <span><img src="images/validate.png"></span> pour valider votre proposition</li> 
+                          <li>Utilisez le bouton <span><img src="images/cancel.png"></span> pour remettre les tuiles mises en jeu sur votre chevalet</li> 
+                          <li>Utilisez le bouton <span><img src="images/shuffle.png"></span> pour mélanger les lettres situées sur le chevalet</li> 
+                          <li>Utilisez le bouton <span><img src="images/change.png"></span> pour obtenir un nouveau tirage en remplacement des lettres placées sur le chevalet (attention, il vous en coûtera 15 points et votre tour sera terminé !)</li> 
+                          <li>Utilisez le bouton <span><img src="images/skip.png"></span> pour passer votre tour</li> 
+                          <li>Utilisez le bouton <span><img src="images/resign.png"></span> pour déclarer forfait et abandonner la partie</li> 
+                          <li>Enfin, utilisez le bouton <span><img src="images/pause.png"></span> pour mettre la partie en attente et revenir à cet écran d'accueil.</li> 
+                   </ul> 
+                <br> 
+                   <p>Utilisez le cadre ci-dessous pour créer une nouvelle partie ou bien en continuer une créée précédemment sur votre navigateur.<p> 
+                   <p>Bonne partie !</p> 
+            </div> 
+            <div class="gameOptions"> 
+                   <div class="createGame"> 
+                          <fieldset class="gameName"> 
+                                <label>Nom de la partie à créer :</label> 
+                                <input type="text" id="txtGameName" placeholder="Nom de la partie" autofocus="autofocus"> 
+                          </fieldset> 
+                          <div class="gamePlayersInfo"> 
+                                <fieldset data-id="1"> 
+                                      <input type="checkbox" class="chkPlayer" id="chkPlayer1" checked="checked" disabled="disabled"> 
+                                      <label for="chkPlayer1">Joueur 1</label> 
+                                      <input type="text" class="txtPlayerName"  placeholder="Joueur 1"> 
+                                </fieldset> 
+                                <fieldset data-id="2"> 
+                                      <input type="checkbox" class="chkPlayer"  id="chkPlayer2"> 
+                                      <label for="chkPlayer2"  class="playerDisabled">Joueur 2</label> 
+                                      <input type="text" class="txtPlayerName"  placeholder="Pas de joueur 2" disabled="disabled"> 
+                                </fieldset> 
+                                <fieldset data-id="3"> 
+                                      <input type="checkbox" class="chkPlayer"  id="chkPlayer3" disabled="disabled"> 
+                                      <label for="chkPlayer3" class="playerDisabled">Joueur 3</label> 
+                                      <input type="text" class="txtPlayerName"  placeholder="Pas de joueur 3" disabled="disabled"> 
+                                </fieldset> 
+                                <fieldset data-id="4"> 
+                                      <input type="checkbox" class="chkPlayer"  id="chkPlayer4" disabled="disabled"> 
+                                      <label for="chkPlayer4"  class="playerDisabled">Joueur 4</label> 
+                                      <input type="text" class="txtPlayerName"  placeholder="Pas de joueur 4" disabled="disabled"> 
+                                </fieldset> 
+                                <fieldset id="modeChoice" disabled="disabled"> 
+                                      <input type="radio" class="rdMode"  id="rdModeLocal" value="local" checked="checked" name="gameMode"> 
+                                      <label for="rdModeLocal">En local</label> 
+                                      <input type="radio" class="rdMode"  id="rdModeDistant" value="distant" name="gameMode"> 
+                                      <label for="rdModeDistant">A distance</label> 
+                                </fieldset> 
+                          </div> 
+                          <div class="gameLaunchButtons"> 
+                                <button id="startNewGame">Démarrer une partie</button> 
+                                <button id="startGameFromCode">Entrer un code de partie</button> 
+                          </div> 
+                   </div> 
+                   <div class="continueGame"> 
+                   </div> 
+            </div> 
+        </div>
         <div class="mainContainer"> 
             <div class="headerZone"> 
                 <img class="gameLogo" src="images/logoMots.png"> 
@@ -31,7 +98,11 @@
                 </div> 
                 <div class="toolZone"> 
                     <div class="infoZone"></div> 
-                    <div class="toolbox"> 
+                    <div class="toolbox">
+                        <img id="WCShuffle" src="images/shuffle.png"> 
+                        <img id="WCChange" src="images/change.png"> 
+                        <img id="WCSkip" src="images/skip.png"> 
+                        <img id="WCResign" src="images/resign.png">  
                         <img id="WCValidate" class="disabled" src="images/validate.png"> 
                         <img id="WCCancel" class="disabled" src="images/cancel.png"> 
                     </div> 
