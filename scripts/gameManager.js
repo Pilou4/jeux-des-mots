@@ -78,7 +78,11 @@ function placeTile(e, ui)
         return false; 
     } 
     else 
-    { 
+    {
+        if (letter == "") 
+        { 
+            askJokerValue($(ui.helper)); 
+        }  
         gameBoard[cellY][cellX] = letter; 
         $(ui.helper).attr('data-coords', cellY + '-' + cellX).appendTo('.gameArea').css(
             { 
@@ -88,17 +92,22 @@ function placeTile(e, ui)
             } 
         ); 
         $('#WCCancel').removeClass('disabled'); 
-        playedWords = checkPositioning(); 
-        if (playedWords.status) 
-        { 
-            $('#WCValidate').removeClass('disabled'); 
-        } 
-        else 
-        { 
-            $('#WCValidate').addClass('disabled'); 
-        } 
+        playedWords = checkPositioning();
+        checkButtons();
     } 
 }
+
+function checkButtons() 
+{ 
+    if (playedWords.status) 
+    { 
+        $('#WCValidate').removeClass('disabled'); 
+    } 
+    else 
+    { 
+        $('#WCValidate').addClass('disabled'); 
+    } 
+} 
 
 function toolClick(e) 
 { 
@@ -153,7 +162,8 @@ function saveGames()
 function loadGames() 
 { 
     const loadData = localStorage.getItem('boardGames'); 
-    games = []; 
+    games = [];
+    $('.gameArea').append('<div class="playedTileItem" data-coords="' + line + '-' + column + '" style="position: absolute; left: ' + (board.xOffset + (column * (board.tileSize + board.offset))) + 'px; top: ' + (board.yOffset + ((line + 1) * (board.tileSize + board.offset))) + 'px;"><label class="tileLetter' + (value == 0 ? " jokerTile" : "") + '">' + (letter == '*' ? '' : letter) + '</label><label class="tilePoints">' + value + '</label></div>');
     if (loadData) 
     { 
         games = JSON.parse(atob(loadData)); 

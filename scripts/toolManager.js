@@ -49,7 +49,8 @@ function cancel()
             gameBoard[cellY][cellX] = ""; 
         } 
     ); 
-    specialCells.filter(e => e.used == 0).forEach(e => e.used = undefined); 
+    specialCells.filter(e => e.used == 0).forEach(e => e.used = undefined);
+    $('.waitingLetter .jokerTile').text('').removeClass('.jokerTile'); 
     $('.waitingLetter').removeClass('waitingLetter').attr('style', '').addClass('tileItem').appendTo($('.playerRack')); 
     prepareTiles(); 
 }
