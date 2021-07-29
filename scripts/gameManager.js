@@ -33,7 +33,7 @@ function prepareTiles()
                     gameBoard[cellY][cellX] = ""; 
                 } 
             }, 
-            drag:  function (e, ui)
+            drag: function (e, ui)
             { 
                 const cellX = parseInt($(ui.helper).offset().left / (board.tileSize + board.offset)); 
                 const cellY = parseInt($(ui.helper).offset().top / (board.tileSize + board.offset)) - 1; 
@@ -51,7 +51,7 @@ function prepareTiles()
                     $(ui.helper).removeClass('forbiddenDropZone').addClass('legalDropZone'); 
                 } 
             }, 
-            stop:  function( e, ui)
+            stop: function( e, ui)
             { 
                 $(ui.helper).removeClass('forbiddenDropZone').removeClass('legalDropZone'); 
             }, 
@@ -67,8 +67,7 @@ function placeTile(e, ui)
     const letter = $(ui.helper).find('.tileLetter').text(); 
     if (gameBoard[cellY][cellX] != '') 
     {
-        let oldPos = $(ui.helper).parent().hasClass('gameArea') ?  
-        $(ui.helper).data('orPos') : {left: 0, top: 0}; 
+        let oldPos = $(ui.helper).parent().hasClass('gameArea') ? $(ui.helper).data('orPos') : {left: 0, top: 0}; 
         $(ui.helper).animate(
             { 
                 left: oldPos.left + 'px', 
@@ -133,3 +132,30 @@ function toolClick(e)
            break; 
     } 
 }
+
+function encodeBoard() 
+{ 
+    return $('.playedTileItem').get().map(e => String.fromCharCode((+$(e).attr('data-coords').split('-')[0]) + 65) + String.fromCharCode(+$(e).attr('data-coords').split('-')[1] + 65) + $(e).find('label:first').text() + String.fromCharCode(65 + +$(e).find('label:last').text())).join(''); 
+}
+
+function saveGames() 
+{ 
+    if (games.length > 0) 
+    { 
+        localStorage.setItem('boardGames', btoa(JSON.stringify(games))); 
+    } 
+    else 
+    { 
+        localStorage.removeItem('boardGames'); 
+    } 
+}
+
+function loadGames() 
+{ 
+    const loadData = localStorage.getItem('boardGames'); 
+    games = []; 
+    if (loadData) 
+    { 
+        games = JSON.parse(atob(loadData)); 
+    } 
+} 

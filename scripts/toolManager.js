@@ -3,7 +3,7 @@ function validate()
    if (checkValidity(playedWords.words)) 
    { 
     $('.infoZone').text('Vous venez de marquer ' + playedWords.score + ' points'); 
-    players[0].score += playedWords.score; 
+    currentPlayer.score += playedWords.score;
     $('.waitingLetter').get().forEach(e =>
         { 
             const line = parseInt($(e).offset().top / (board.tileSize + board.offset)) - 1; 
@@ -23,13 +23,13 @@ function validate()
     if (currentPlayer.pid == 1) 
     { 
         currentGame.round++; 
-    }  
+    }
+    saveGames(); 
    } 
    else 
    { 
         const badWords = playedWords.words.filter(e => !allWords.some(f => f == e.toLowerCase())); 
-        $('.infoZone').text('Au moins un mot joué est inconnu : ' + 
-        badWords.join(' ')); 
+        $('.infoZone').text('Au moins un mot joué est inconnu : ' + badWords.join(' ')); 
    } 
 } 
  
@@ -73,7 +73,9 @@ function changeTiles()
             prepareTiles(); 
             players[0].score -= 15; 
             $('.historyZone').html(('000' + ($('.historyZone').html().split('<br>').length)).substr(-3) + ' - Echange de lettres - -15 points<br>' + 
-            $('.historyZone').html()); 
+            $('.historyZone').html());
+            updateGame(); 
+            saveGames();  
 }
 
 function createGame() 
@@ -104,18 +106,20 @@ function createGame()
     currentGame ={
         gameId: guid(), 
         name: $('#txtGameName').val() ? $('#txtGameName').val() : "Nouvelle partie", 
-        mode: $('.gameOptions input[name="gameMode"]:checked').val(), 
+        mode: $('.gameOptions input[name="gameMode"]:checked').val(),
+        mapping: currentPlayer.uid, 
         round: 0 
     }; 
-    updateGame(); 
+    updateGame();
+    games.push(currentGame);
+    saveGames();
+    showGames();  
     $('.mainMenu').hide(); 
 } 
  
 function updateGame() 
 { 
-    currentPlayer.rack = $('.tileItem').get().map(e => {return  
-    $(e).find('label:first').text() == '' ? '*' :  
-    $(e).find('label:first').text();}).join(''); 
+    currentPlayer.rack = $('.tileItem').get().map(e => {return $(e).find('label:first').text() == '' ? '*' : $(e).find('label:first').text();}).join(''); 
     currentGame.board = encodeBoard(); 
     currentGame.bag = letterBag; 
     currentGame.history = $('.historyZone').html(); 
@@ -125,4 +129,50 @@ function updateGame()
     { 
         currentGame.round++; 
     } 
+}
+
+function loadGame(e) 
+{ 
+    currentGame = games[$(e.currentTarget).attr('data-index')]; 
+    players = currentGame.players; 
+    currentPlayer = players.find(f => f.uid == currentGame.turnId); 
+    boardGame = ""; 
+    $('.playedTileItem').remove(); 
+    if (currentGame.board != '') 
+    { 
+        currentGame.board.match(/.{4}/g).forEach (f =>
+            { 
+                const line = f.charCodeAt(0) - 65; 
+                const column = f.charCodeAt(1) - 65; 
+                const letter = f.substr(2, 1); 
+                const value = f.charCodeAt(3) - 65; 
+                gameBoard[line][column] = letter; 
+                const specialCell = specialCells.find(g => g.line == line && g.column == column); 
+                if (specialCell) 
+                { 
+                    specialCell.used = 1; 
+                } 
+                $('.gameArea').append('<div class="playedTileItem" data-coords="' + line + '-' + column + '" style="position: absolute; left: ' + (board.xOffset + (column * (board.tileSize + board.offset))) + 'px; top: '  + (board.yOffset + (line * (board.tileSize + board.offset))) + 'px;"><label class="tileLetter">' + (letter == '*' ? '' : letter) + '</label><label class="tilePoints">' + value + '</label></div>'); 
+            } 
+        ); 
+    } 
+    letterBag = currentGame.bag; 
+    $('.historyZone').html(currentGame.history); 
+    $('.playerRack').empty(); 
+    placeTilesOnPlayerRack(currentPlayer.rack.split('')); 
+    prepareTiles(); 
+    $('.mainMenu').hide(); 
+}
+
+function deleteGame(e) 
+{ 
+    const gameIndex = $(e.currentTarget).attr('data-index'); 
+    confirmCommand({message: "Etes-vous sûr(e) de vouloir supprimer cette partie ?", yesFunction: () => confirmDelete(gameIndex)}); 
+}
+
+function confirmDelete(gameIndex) 
+{ 
+    $('.continueGame li')[gameIndex].remove(); 
+    games.splice(gameIndex, 1); 
+    saveGames(); 
 }

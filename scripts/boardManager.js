@@ -29,3 +29,21 @@ function prepareBoard()
         },
     );
 }
+
+function showGames() 
+{ 
+    if (games.length > 0) 
+    { 
+        $('.continueGame label:first').hide(); 
+    } 
+    else 
+    { 
+        $('.continueGame label:first').show(); 
+    } 
+    $('.continueGame ul:first').empty(); 
+    games.forEach((e, i) =>
+        {
+            $('.continueGame ul:first').append('<li><div class="gameDiv"><label class="gameName">' +  e.name + '</label><label class="gamePlayerNames">' + e.players.length + ' ' + (e.players.length > 1 ? 'joueurs : ' : 'joueur : ') + e.players.map(f => f.name).join(' - ') + '</label><img class="vsButton" id="loadGame" data index="' + i + '" src="images/validate.png"><img class="vsButton" id="deleteGame" data-index="' + i + '" src="images/resign.png"></div></li>'); 
+        }
+    ) 
+} 

@@ -20,7 +20,7 @@ function init()
         return a; 
     }; 
     
-    $('.toolbox').on('click', 'img:not(.disabled)', toolClick); 
+    $('.toolbox,.gameList').on('click', 'img:not(.disabled)', toolClick);     
     $('.chkPlayer').on ('change', gameOptionChange);
     $('button').on ('click',toolClick); 
     fillLetterBag();
@@ -28,6 +28,8 @@ function init()
     getPlayerLetters(8);
     prepareBoard();
     prepareTiles();
+    loadGames(); 
+    showGames();
 }
 
 function getPlayerLetters(number) 
