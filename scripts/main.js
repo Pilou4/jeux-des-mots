@@ -4,6 +4,8 @@ let players = [];
 let currentPlayer = {}; 
 let games = []; 
 let currentGame = {};
+let skippedTurns = 0; 
+let lastTurn = false;
  
 $(document).ready (init); 
  
@@ -20,9 +22,10 @@ function init()
         return a; 
     }; 
     
-    $('.toolbox,.gameList').on('click', 'img:not(.disabled)', toolClick);     
+    $('.toolbox,.gameList').on ('mouseenter', 'img:not(.disabled)', playClickSound ).on('click', 'img:not(.disabled)',toolClick);     
     $('.chkPlayer').on ('change', gameOptionChange);
-    $('button').on ('click',toolClick); 
+    $('button').on ('click', toolClick);
+    initSounds();
     fillLetterBag();
     drawBoard(); 
     getPlayerLetters(8);
@@ -30,6 +33,7 @@ function init()
     prepareTiles();
     loadGames(); 
     showGames();
+    showGameStats();
 }
 
 function getPlayerLetters(number) 
@@ -70,7 +74,8 @@ function gameOptionChange(e)
             fieldset.find('input:last').prop('disabled',  true).prop('placeholder', 'Pas de joueur ' + t); 
         } 
         option.prop('disabled', false); 
-    } 
+    }
+    $('.gameOptions #modeChoice').prop('disabled', !$('.gameOptions .gamePlayersInfo fieldset[data-id="2"]').find('input:first').prop('checked')); 
 }
 
 

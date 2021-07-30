@@ -15,11 +15,14 @@
         <script src="scripts/gameParameters.js"></script>
         <script src="scripts/gameManager.js"></script> 
         <script src="scripts/boardManager.js"></script>  
-        <script src="scripts/confirmBox.js"></script> 
+        <script src="scripts/confirmBox.js"></script>
+        <script src="scripts/soundManager.js"></script> 
         <script src="scripts/main.js"></script> 
         <title>Jeux des mots</title>
     </head>
     <body>
+        <audio id="sndClick"><source src="sounds/click.mp3" type="audio/mpeg"></audio>
+		<audio id="sndShuffle"><source src="sounds/shuffle.mp3" type="audio/mpeg"></audio>
         <div class="mainMenu"> 
             <img class="gameLogo" src="images/logoMots.png"> 
             <label class="gameTitle">L&nbsp;E&nbsp;&nbsp;M&nbsp;A&nbsp;I&nbsp;T&nbsp;R&nbsp; E&nbsp;&nbsp;D&nbsp;E&nbsp;S&nbsp;&nbsp;M&nbsp;O&nbsp;T&nbsp;S</label> 
@@ -79,16 +82,18 @@
                                 <button id="startNewGame">Démarrer une partie</button> 
                                 <button id="startGameFromCode">Entrer un code de partie</button> 
                           </div> 
-                   </div> 
-                   <div class="continueGame"> 
-                   </div> 
-            </div> 
-        </div>
+                    </div> 
+                    <div class="continueGame">
+                    <label>Aucune partie en cours</label>
+                    </div> 
+                </div> 
+    </div>
         <div class="mainContainer"> 
             <div class="headerZone"> 
                 <img class="gameLogo" src="images/logoMots.png"> 
                 <label class="gameTitle">L&nbsp;E&nbsp;&nbsp;M&nbsp;A&nbsp;I&nbsp;T&nbsp;R&nbsp;E&nbsp;&nbsp;D&nbsp;E&nbsp;S&nbsp;&nbsp;M&nbsp;O&nbsp;T&nbsp;S</label> 
-                <img class="gameLogo" src="images/logoMots.png">  
+                <img class="gameLogo" src="images/logoMots.png">
+                <div class="scoreZone"></div>
             </div> 
             <div class="gameZone"> 
                 <div class="mainBoard"><div class="gameArea"></div></div> 
@@ -106,7 +111,8 @@
                         <img id="WCSkip" src="images/skip.png"> 
                         <img id="WCResign" src="images/resign.png">  
                         <img id="WCValidate" class="disabled" src="images/validate.png"> 
-                        <img id="WCCancel" class="disabled" src="images/cancel.png"> 
+                        <img id="WCCancel" class="disabled" src="images/cancel.png">
+                        <img id="WCPause" src="images/pause.png">
                     </div> 
                 </div> 
             </div> 

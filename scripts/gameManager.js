@@ -13,7 +13,8 @@ function takeLettersFromBag(number)
         result += letters[letterIndex]; 
         letters.splice(letterIndex, 1); 
         letterBag = letters.join(''); 
-    } 
+    }
+    playShuffleSound();
     return result; 
 }
 
@@ -51,7 +52,7 @@ function prepareTiles()
                     $(ui.helper).removeClass('forbiddenDropZone').addClass('legalDropZone'); 
                 } 
             }, 
-            stop: function( e, ui)
+            stop: function(e, ui)
             { 
                 $(ui.helper).removeClass('forbiddenDropZone').removeClass('legalDropZone'); 
             }, 
@@ -126,9 +127,17 @@ function toolClick(e)
         case 'WCChange': 
            changeTiles(); 
            break;
+        case 'WCPause':
+			pauseGame();
+        case 'WCSkip':
+			skipTurn();
+			break;
         case 'startNewGame': 
             createGame(); 
-            break;  
+            break;
+        case 'WCResign':
+			resignGame();
+			break; 
        default:
            if (cmd && typeof(window[cmd]) == "function") 
            { 
@@ -163,9 +172,96 @@ function loadGames()
 { 
     const loadData = localStorage.getItem('boardGames'); 
     games = [];
-    $('.gameArea').append('<div class="playedTileItem" data-coords="' + line + '-' + column + '" style="position: absolute; left: ' + (board.xOffset + (column * (board.tileSize + board.offset))) + 'px; top: ' + (board.yOffset + ((line + 1) * (board.tileSize + board.offset))) + 'px;"><label class="tileLetter' + (value == 0 ? " jokerTile" : "") + '">' + (letter == '*' ? '' : letter) + '</label><label class="tilePoints">' + value + '</label></div>');
     if (loadData) 
     { 
         games = JSON.parse(atob(loadData)); 
     } 
+}
+
+function updateTurn () 
+{ 
+    if (!lastTurn && letterBag == "" && currentPlayer.rack == "") 
+    { 
+        lastTurn = true; 
+    } 
+    if (currentGame.players.length > 1) 
+    { 
+        if (currentPlayer.id == currentGame.players.length || skippedTurns == 2 * currentGame.players.length) 
+        { 
+            endGame(); 
+        } 
+        else 
+        { 
+            currentPlayer = currentGame.players.find(e => e.pid == (currentPlayer.pid == currentGame.players.length ? 1 : currentPlayer.pid + 1)); 
+            currentGame.turnId = currentPlayer.uid; 
+            currentGame.skippedTurns = skippedTurns; 
+            currentGame.lastTurn = lastTurn; 
+            saveGames(); 
+            if (currentGame.mode == "local") 
+            { 
+                $('.playerRack').empty(); 
+                $('.playerRack').attr('class', 'playerRack').addClass('player_' + currentPlayer.pid); 
+                placeTilesOnPlayerRack(currentPlayer.rack.split('')); 
+                prepareTiles(); 
+                showGames(); 
+            } 
+            else 
+            { 
+                showGameCode('newCode'); 
+            } 
+        } 
+    } 
+    else if (lastTurn || skippedTurns == 2) 
+    { 
+        endGame(); 
+    } 
+}
+
+function showGameCode(mode) 
+{ 
+    let gameCode = btoa(JSON.stringify(currentGame)); 
+    if (mode == 'newCode') 
+    { 
+           localStorage.setItem("lastCode_" + currentGame.gameId, gameCode); 
+    } 
+    gameCode = localStorage.getItem("lastCode_" + currentGame.gameId); 
+    $('body').append('<div class="screenMask"></div><div class="nextTurnScreen"><label class="nextTurnTitle">Votre tour est terminé</label><div class="nextTurnBox"><p>Voici le code de la partie avec votre dernier coup : <span class="codeZone">' + gameCode + '</span><p>Vous devez le transmettre au joueur suivant : ' + players.find(e => e.uid == currentGame.turnId).name + '</div><div style="width: 100%; height: 60px; text-align: right; position: absolute; bottom: -30px; right: 10px;"><button style="margin-right: 6px;" id="restart">Retourner à l\'écran d\'accueil</button></div></div></div>'); 
+    $('.nextTurnScreen #restart').on('click', e => window.location.href = window.location.href); 
+} 
+
+function adjustScores() 
+{ 
+    players.forEach(e => 
+        { 
+            if (e.rack != '') 
+            { 
+                let points = e.rack.split('').reduce((p, c) => p + lettersDistribution.find(g => g.letter == c).value, 0); 
+                e.score -= points; 
+                players.forEach(f => f.score += f.uid == e.uid ? 0 : points);
+            } 
+        } 
+    ); 
+}
+
+function endGame() 
+{ 
+    currentGame.terminated = true; 
+    adjustScores(); 
+    let playerList = players.map(e => '<li><span class="endGamePlayerName">' + e.name + '</span> : ' + e.score + ' points</li>').join(''); 
+    let winner = "Le gagnant de la partie est : " + players.sort((a, b) => + a.score < +b.score ? 1 : +a.score > +b.score ? -1 : 0)[0].name; 
+    let ranking = '<ul class="endGamePlayerList">' + playerList + '</ul>'; 
+    if (currentGame.players.find(e => e.uid == currentGame.turnId).pid == 1) 
+    { 
+        currentGame.ranking = ranking; 
+        currentGame.turnId = currentGame.players[2].uid; 
+    } 
+    ranking = currentGame.ranking; 
+    $('body').append('<div class="screenMask"></div><div class="endScreen' + (currentGame.mode == 'distant' && currentGame.players.find(e => e.uid == currentGame.mapping).pid == 1 ? ' extendedBox' : '') + '"><label class="endGameTitle">La partie est terminée !</label><div class="endGameBox"><label class="gameWinner">' + winner + '</label>' + ranking + (currentGame.mode == 'distant' && currentGame.players.find(e =>  e.uid == currentGame.mapping).pid == 1 ? '<div class="nextTurnBox"><p>Voici  le code final de la partie : <span class="codeZone">' + btoa(JSON.stringify(currentGame)) + '</span><p>Vous devez le transmettre aux autres joueurs.</div>' : '') + '<div style="width: 100%; height: 60px; text-align: right; position: absolute; bottom: -30px; right: 10px;"><button style="margin-right: 6px;" id="restart">Retourner à l\'écran d\'accueil</button></div></div></div>') 
+    $('#restart').on('click',() =>
+        {
+            games.splice(games.indexOf(currentGame), 1); 
+            saveGames(); 
+            window.location.href = window.location.href; 
+        } 
+    ) 
 } 

@@ -30,23 +30,81 @@ function prepareBoard()
     );
 }
 
-function showGames() 
+// vérifie la rectitude du placement des différentes tuiles placées sur le plateau de jeu.
+function checkPositioning () 
 { 
-    if (games.length > 0) 
+    let letters = $('.gameArea .tileItem').get(); 
+    let line = $(letters[0]).offset().top; 
+    let column = $(letters[0]).offset().left; 
+    const horizontalWord = letters.every(e => $(e).offset().top === line); 
+    const verticalWord = letters.every(e => $(e).offset().left === column); 
+    if (!verticalWord && !horizontalWord) 
     { 
-        $('.continueGame label:first').hide(); 
-    } 
-    else 
+           return {status: false, reason: 'Les lettres jouées ne sont pas toutes alignées horizontalement ou verticalement.'}; 
+    }
+    let word =letters.map (e => $(e).find('label:first').text()).join(''); 
+    if ($('.playedTileItem').length == 0) 
     { 
-        $('.continueGame label:first').show(); 
-    } 
-    $('.continueGame ul:first').empty(); 
-    games.forEach((e, i) =>
+        if (word.length < 2) 
+        { 
+            return {status: false, reason: "Le mot proposé est trop court."}; 
+        } 
+    }
+    if (!letters.some(e => parseInt($(e).offset().left / (board.tileSize + 
+        board.offset)) == 7 && parseInt($(e).offset().top / (board.tileSize +  
+        board.offset)) - 1 == 7)) 
+        { 
+            return {status: false, reason: 'Une des lettres du premier mot joué doit être posée sur la case centrale du plateau.'}; 
+        } else
         {
-            $('.continueGame ul:first').append('<li><div class="gameDiv"><label class="gameName">' +  e.name + '</label><label class="gamePlayerNames">' + e.players.length + ' ' + (e.players.length > 1 ? 'joueurs : ' : 'joueur : ') + e.players.map(f => f.name).join(' - ') + '</label><img class="vsButton" id="loadGame" data index="' + i + '" src="images/validate.png"><img class="vsButton" id="deleteGame" data-index="' + i + '" src="images/resign.png"></div></li>'); 
-        }
-    ) 
+            line = parseInt(line / (board.tileSize + board.offset)) - 1; 
+            column = parseInt(column / (board.tileSize + board.offset)); 
+            checkPositionValidity = $('.playedTileItem').get().some(e =>
+                {
+                    return (
+                        horizontalWord &&
+                        (((parseInt($(e).offset().top /(board.tileSize + board.offset)) - 1 == line - 1 || 
+                        parseInt($(e).offset().top / (board.tileSize + board.offset)) - 1 == line + 1 ) && 
+                        parseInt($(e).offset().left /(board.tileSize + board.offset)) >= column &&
+                        parseInt($(e).offset().left / (board.tileSize + board.offset)) <= column + word.length - 1 ) || 
+                        (parseInt($(e).offset().top / (board.tileSize + board.offset)) - 1 == line &&
+                        (parseInt($(e).offset().left / (board.tileSize + board.offset)) == column - 1 || 
+                        parseInt($(e).offset().left / (board.tileSize + board.offset)) == column + word.length))) 
+                   ) ||
+                   ( 
+                        verticalWord &&
+                        (((parseInt($(e).offset().left / (board.tileSize + board.offset)) == column - 1 ||
+                        parseInt($(e).offset().left / (board.tileSizboard.offset)) == column + 1) &&  
+                        parseInt($(e).offset().top / (board.tileSize + board.offset)) - 1 >= line  && 
+                        parseInt($(e).offset().top / (board.tileSize + board.offset)) - 1 <= line + word.length - 1 
+                   ) || 
+                   (
+                       parseInt($(e).offset().left / (board.tileSize + board.offset)) == column &&
+                       (parseInt($(e).offset().top / (board.tileSize + board.offset)) - 1 == line - 1 ||
+                       parseInt($(e).offset().top / (board.tileSize + board.offset)) - 1 == line + word.length))) 
+                    ); 
+                } 
+            ); 
+            if (!checkPositionValidity) 
+            { 
+                return {status: false, reason: 'Tout nouveau mot doit en croiser au moins un déjà existant.'}; 
+            } 
+        }  
+        return checkPlayedWords();
 }
+
+function showGameStats()
+{
+	$('.scoreZone')
+		.empty();
+	if (currentGame && currentGame.players)
+	{
+		currentGame.players.forEach	(
+										(e, i) => $('.scoreZone').append('<fieldset class="scoreField"><label class="playerName">' + (i + 1) + ' - ' + e.name + '</label><label class="scoreValue">' + e.score + '</label></fieldset>')
+									);
+	}
+}
+
 
 function askJokerValue(tile) 
 { 
