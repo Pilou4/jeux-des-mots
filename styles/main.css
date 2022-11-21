@@ -12,6 +12,11 @@ body
     overflow: hidden;
 }
 
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-top: 50px;
+}
 .mainMenu 
 {
     position: absolute;
